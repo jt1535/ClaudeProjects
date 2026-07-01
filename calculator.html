@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>× 2080 Calculator</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #1a1a2e;
+      font-family: 'Segoe UI', sans-serif;
+      color: #eee;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 0.4rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #e94560;
+    }
+
+    p.subtitle {
+      font-size: 0.95rem;
+      color: #888;
+      margin-bottom: 2rem;
+      letter-spacing: 1px;
+    }
+
+    .card {
+      background: #16213e;
+      border-radius: 16px;
+      padding: 2rem 2.5rem;
+      width: 340px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      color: #a8dadc;
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      border: 1px solid #0f3460;
+      background: #0f3460;
+      color: #eee;
+      font-size: 1.4rem;
+      outline: none;
+      transition: border 0.2s;
+      -moz-appearance: textfield;
+    }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+    input[type="number"]:focus {
+      border-color: #e94560;
+    }
+
+    .arrow {
+      text-align: center;
+      font-size: 1.8rem;
+      color: #e94560;
+      margin: 1rem 0;
+    }
+
+    .result-label {
+      font-size: 0.85rem;
+      color: #a8dadc;
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+    }
+
+    .result-box {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      background: #0a1628;
+      border: 1px solid #0f3460;
+      font-size: 1.4rem;
+      color: #a8dadc;
+      min-height: 3rem;
+      letter-spacing: 1px;
+      word-break: break-all;
+    }
+
+    .result-box.has-value {
+      color: #e94560;
+      font-weight: 700;
+    }
+
+    .hint {
+      text-align: center;
+      font-size: 0.78rem;
+      color: #555;
+      margin-top: 1.2rem;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>× 2080</h1>
+<p class="subtitle">Multiply any number by 2080</p>
+
+<div class="card">
+  <label for="numInput">Your Number</label>
+  <input type="number" id="numInput" placeholder="0" autofocus />
+
+  <div class="arrow">↓ × 2080</div>
+
+  <div class="result-label">Result</div>
+  <div class="result-box" id="result">—</div>
+
+  <p class="hint">Result updates as you type</p>
+</div>
+
+<script>
+  const input = document.getElementById('numInput');
+  const result = document.getElementById('result');
+
+  input.addEventListener('input', () => {
+    const val = input.value;
+    if (val === '' || val === null) {
+      result.textContent = '—';
+      result.classList.remove('has-value');
+    } else {
+      const num = parseFloat(val);
+      if (!isNaN(num)) {
+        result.textContent = (num * 2080).toLocaleString();
+        result.classList.add('has-value');
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
