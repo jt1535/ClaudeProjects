@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Budget Calculator</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 480px;
+      padding: 40px 36px;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #1a202c;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: #718096;
+      margin-bottom: 32px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #4a5568;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .input-wrap {
+      position: relative;
+      margin-bottom: 24px;
+    }
+
+    .input-wrap .prefix {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.1rem;
+      color: #a0aec0;
+      font-weight: 600;
+      pointer-events: none;
+    }
+
+    .input-wrap .suffix {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      color: #a0aec0;
+      font-weight: 600;
+      pointer-events: none;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      font-size: 1.1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      outline: none;
+      color: #1a202c;
+      transition: border-color 0.2s;
+      -moz-appearance: textfield;
+    }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+    input[type="number"]:focus { border-color: #667eea; }
+
+    .salary-input {
+      padding: 14px 14px 14px 32px;
+    }
+
+    .pct-input {
+      padding: 12px 36px 12px 14px;
+      font-size: 1rem;
+    }
+
+    .section-divider {
+      border: none;
+      border-top: 1px solid #e2e8f0;
+      margin: 4px 0 24px;
+    }
+
+    .section-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #4a5568;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 16px;
+    }
+
+    .pct-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .pct-field label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+      text-transform: none;
+      letter-spacing: 0;
+      font-size: 0.88rem;
+    }
+
+    .pct-field label .icon {
+      font-size: 1rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    button:hover { opacity: 0.92; }
+    button:active { transform: scale(0.98); }
+
+    .results {
+      margin-top: 32px;
+      display: none;
+    }
+
+    .results.visible { display: block; }
+
+    .results-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #4a5568;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 16px;
+    }
+
+    .budget-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      background: #f7fafc;
+    }
+
+    .budget-row .label-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .result-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .result-icon.rent  { background: #ebf4ff; }
+    .result-icon.food  { background: #f0fff4; }
+    .result-icon.gas   { background: #fffaf0; }
+
+    .row-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #2d3748;
+    }
+
+    .row-pct {
+      font-size: 0.75rem;
+      color: #a0aec0;
+    }
+
+    .row-amount {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #2d3748;
+    }
+
+    .remaining-box {
+      margin-top: 20px;
+      padding: 18px 16px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #667eea18, #764ba218);
+      border: 2px solid #667eea44;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .remaining-box .row-name {
+      font-size: 1rem;
+      color: #553c9a;
+    }
+
+    .remaining-box .row-amount {
+      font-size: 1.15rem;
+      color: #553c9a;
+    }
+
+    .error {
+      color: #e53e3e;
+      font-size: 0.85rem;
+      margin-top: -16px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .error.visible { display: block; }
+
+    .pct-error {
+      color: #e53e3e;
+      font-size: 0.82rem;
+      margin-top: -12px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .pct-error.visible { display: block; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Budget Calculator</h1>
+    <p class="subtitle">Enter your salary and custom percentages for each category.</p>
+
+    <label for="salary">Salary</label>
+    <div class="input-wrap">
+      <span class="prefix">$</span>
+      <input type="number" id="salary" class="salary-input" placeholder="0.00" min="0" step="0.01" />
+    </div>
+    <p class="error" id="salary-error">Please enter a valid salary greater than $0.</p>
+
+    <hr class="section-divider" />
+    <p class="section-label">Budget Percentages</p>
+
+    <div class="pct-grid">
+      <div class="pct-field">
+        <label for="rent-pct"><span class="icon">🏠</span> Rent</label>
+        <div class="input-wrap">
+          <input type="number" id="rent-pct" class="pct-input" placeholder="0" min="0" max="100" step="0.1" />
+          <span class="suffix">%</span>
+        </div>
+      </div>
+      <div class="pct-field">
+        <label for="food-pct"><span class="icon">🛒</span> Food</label>
+        <div class="input-wrap">
+          <input type="number" id="food-pct" class="pct-input" placeholder="0" min="0" max="100" step="0.1" />
+          <span class="suffix">%</span>
+        </div>
+      </div>
+      <div class="pct-field">
+        <label for="gas-pct"><span class="icon">⛽</span> Gas</label>
+        <div class="input-wrap">
+          <input type="number" id="gas-pct" class="pct-input" placeholder="0" min="0" max="100" step="0.1" />
+          <span class="suffix">%</span>
+        </div>
+      </div>
+    </div>
+    <p class="pct-error" id="pct-error">Total percentage cannot exceed 100%.</p>
+
+    <button onclick="calculate()">Calculate Budget</button>
+
+    <div class="results" id="results">
+      <hr class="section-divider" style="margin-top:32px;" />
+      <p class="results-title">Budget Breakdown</p>
+
+      <div class="budget-row">
+        <div class="label-group">
+          <div class="result-icon rent">🏠</div>
+          <div>
+            <div class="row-name">Rent</div>
+            <div class="row-pct" id="rent-pct-label">—</div>
+          </div>
+        </div>
+        <div class="row-amount" id="rent-amount">—</div>
+      </div>
+
+      <div class="budget-row">
+        <div class="label-group">
+          <div class="result-icon food">🛒</div>
+          <div>
+            <div class="row-name">Food</div>
+            <div class="row-pct" id="food-pct-label">—</div>
+          </div>
+        </div>
+        <div class="row-amount" id="food-amount">—</div>
+      </div>
+
+      <div class="budget-row">
+        <div class="label-group">
+          <div class="result-icon gas">⛽</div>
+          <div>
+            <div class="row-name">Gas</div>
+            <div class="row-pct" id="gas-pct-label">—</div>
+          </div>
+        </div>
+        <div class="row-amount" id="gas-amount">—</div>
+      </div>
+
+      <div class="remaining-box">
+        <div>
+          <div class="row-name">Remaining</div>
+          <div class="row-pct" id="remaining-pct-label">—</div>
+        </div>
+        <div class="row-amount" id="remaining-amount">—</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function fmt(n) {
+      return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function calculate() {
+      const salaryError = document.getElementById('salary-error');
+      const pctError    = document.getElementById('pct-error');
+      const results     = document.getElementById('results');
+
+      const salary   = parseFloat(document.getElementById('salary').value);
+      const rentPct  = parseFloat(document.getElementById('rent-pct').value) || 0;
+      const foodPct  = parseFloat(document.getElementById('food-pct').value) || 0;
+      const gasPct   = parseFloat(document.getElementById('gas-pct').value)  || 0;
+
+      let valid = true;
+
+      if (!salary || salary <= 0) {
+        salaryError.classList.add('visible');
+        valid = false;
+      } else {
+        salaryError.classList.remove('visible');
+      }
+
+      if (rentPct + foodPct + gasPct > 100) {
+        pctError.classList.add('visible');
+        valid = false;
+      } else {
+        pctError.classList.remove('visible');
+      }
+
+      if (!valid) {
+        results.classList.remove('visible');
+        return;
+      }
+
+      const rent      = salary * (rentPct / 100);
+      const food      = salary * (foodPct / 100);
+      const gas       = salary * (gasPct  / 100);
+      const remaining = salary - rent - food - gas;
+      const remainPct = 100 - rentPct - foodPct - gasPct;
+
+      document.getElementById('rent-pct-label').textContent      = rentPct + '% of salary';
+      document.getElementById('food-pct-label').textContent      = foodPct + '% of salary';
+      document.getElementById('gas-pct-label').textContent       = gasPct  + '% of salary';
+      document.getElementById('remaining-pct-label').textContent = remainPct.toFixed(1) + '% remaining';
+
+      document.getElementById('rent-amount').textContent      = fmt(rent);
+      document.getElementById('food-amount').textContent      = fmt(food);
+      document.getElementById('gas-amount').textContent       = fmt(gas);
+      document.getElementById('remaining-amount').textContent = fmt(remaining);
+
+      results.classList.add('visible');
+    }
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') calculate();
+    });
+  </script>
+</body>
+</html>
